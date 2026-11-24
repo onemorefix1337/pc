@@ -1644,35 +1644,41 @@ body.p-setup #pc3d-pins {
   box-shadow: 0 8px 26px rgba(65, 255, 168, .28);
 }
 .pcsu-post {
-  position: fixed; inset: 0; z-index: 9;
-  display: grid; place-items: center; padding: 24px;
-  background: radial-gradient(80% 70% at 50% 45%, rgba(8, 22, 36, .94), rgba(3, 6, 12, .98));
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: clamp(22px, 4vw, 42px) clamp(24px, 5vw, 56px);
+  background: #000;
+  color: #b8b8b8;
+  font: 400 clamp(14px, 1.45vw, 17px)/1.55 'Lucida Console', 'Courier New', ui-monospace, Menlo, Consolas, monospace;
+  cursor: pointer;
 }
 .pcsu-post[hidden] { display: none; }
-.pcsu-post-box {
-  width: min(600px, 100%);
-  padding: 24px 26px; border-radius: 14px;
-  background: rgba(7, 13, 24, .92);
-  border: 1px solid rgba(65, 255, 168, .35);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .65);
-  font-family: ui-monospace, Menlo, monospace;
+.pcsu-bios-head {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+  margin-bottom: 1.2em;
+  color: #e5e5e5;
 }
-.pcsu-post-head {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  padding-bottom: 12px; margin-bottom: 14px;
-  border-bottom: 1px solid rgba(76, 201, 255, .2);
-  font-size: 12px; color: var(--acc2); letter-spacing: .08em;
+.pcsu-bios-epa {
+  text-align: right; white-space: pre; font-size: 0.85em; line-height: 1.25; color: #9ca3af;
 }
 .pcsu-post-log {
-  margin: 0; padding: 0; list-style: none; display: grid; gap: 8px;
-  font-size: 13.5px; color: #dbeafe;
+  margin: 0; padding: 0; list-style: none;
+  max-width: 960px;
 }
 .pcsu-post-log li {
-  opacity: 0; transform: translateY(6px);
-  transition: opacity .26s ease, transform .26s ease;
+  display: none; white-space: pre-wrap; min-height: 1.55em;
 }
-.pcsu-post-log li.on { opacity: 1; transform: none; }
-.pcsu-post-log b { color: #41ffa8; margin-right: 6px; }
+.pcsu-post-log li.on { display: block; }
+.pcsu-post-log .b-w { color: #ffffff; }
+.pcsu-post-log .b-g { color: #8c8c8c; }
+.pcsu-bios-foot {
+  color: #9e9e9e; font-size: 0.92em;
+}
+.pcsu-bios-cur {
+  display: inline-block; width: 0.58em; height: 0.16em; vertical-align: -0.05em;
+  background: #e5e5e5; animation: pcBiosCur .65s steps(1) infinite;
+}
+@keyframes pcBiosCur { 50% { opacity: 0; } }
 
 </style>
 <script>(function(){try{var q=location.search,h=document.documentElement,w=false,s0=0;try{var m=/[?&]theme=(proj|dark)/.exec(q);w=m?m[1]==="proj":(/[?&]proj(=|&|$)/.test(q)||localStorage.getItem("pc.theme")==='"proj"');s0=sessionStorage.getItem("pc.started")}catch(e){}var su=!/[?&]skip(=|&|$)/.test(q)&&(/[?&]setup(=|&|$)/.test(q)||!s0);if(w&&!su)h.classList.add("pj");if(!su)return;h.classList.add("p-setup-pre");window.addEventListener("keydown",function(e){if(h.classList.contains("p-setup-pre")){try{if(window.__suKey)window.__suKey(e)}catch(x){}e.stopImmediatePropagation()}},true);setTimeout(function(){if(!document.getElementById("p-setup"))h.classList.remove("p-setup-pre")},6000)}catch(e){}})()</script>
@@ -11478,10 +11484,14 @@ m1 = [
         '</div>' +
       '</div>' +
       '<div class="pcsu-post" id="pcsu-post" hidden aria-live="polite">' +
-        '<div class="pcsu-post-box">' +
-          '<div class="pcsu-post-head"><span>AM4-BENCH // SYSTEM POST</span><span id="pcsu-post-stat">RUNNING CHECKS…</span></div>' +
+        '<div>' +
+          '<div class="pcsu-bios-head">' +
+            '<div>AMIBIOS(C)2024 American Megatrends, Inc.<br>MSI B450M-A PRO MAX (MS-7C52) BIOS Ver: 3.L0</div>' +
+            '<div class="pcsu-bios-epa">+-------------+\n|  AM4  UEFI  |\n+-------------+</div>' +
+          '</div>' +
           '<ul class="pcsu-post-log" id="pcsu-post-log"></ul>' +
         '</div>' +
+        '<div class="pcsu-bios-foot">Press SPACE or Click to skip POST &nbsp;|&nbsp; 08/14/2024-MS-7C52-B450M</div>' +
       '</div>';
     body.appendChild(ov);
     root.classList.add('su-live');
@@ -11653,7 +11663,24 @@ m1 = [
     ov.addEventListener('pointerdown', function () { if (phase === 'intro') endIntro(); });
     playIntro();
 
-    /* POST hardware check transition -> Slide 1 */
+    function playPostBeep() {
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        var ctx = new AC();
+        var osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.035, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.09);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.095);
+        setTimeout(function () { try { ctx.close(); } catch (e) {} }, 220);
+      } catch (e) {}
+    }
+
+    /* Classic VGA text-mode BIOS / POST boot sequence -> Slide 1 */
     async function launchWithPost() {
       if (phase !== 'settings') return;
       phase = 'post';
@@ -11664,27 +11691,51 @@ m1 = [
 
       if (RM) { start(); return; }
 
-      var post = q('#pcsu-post'), log = q('#pcsu-post-log'), stat = q('#pcsu-post-stat');
-      var lines = [
-        '<b>[OK]</b> CPU: AMD Ryzen 5 3500X (6C/6T) — Socket AM4 active',
-        '<b>[OK]</b> BOARD: MSI B450M-A PRO MAX · RAM Dual Channel detected',
-        '<b>[OK]</b> GPU: GeForce GTX 1060 FE · DPR ×' + (Math.round(cfg.pr * 100) / 100) + ' · Bloom ' + (cfg.fx ? 'ON' : 'OFF'),
-        '<b>[OK]</b> DISPLAY: ' + (cfg.theme === 'proj' ? 'Projector High-Contrast' : 'Dark Bench') + ' · Pins ' + (cfg.pins ? 'ON' : 'OFF')
+      var post = q('#pcsu-post'), log = q('#pcsu-post-log');
+      var prTxt = 'x' + (Math.round(cfg.pr * 100) / 100);
+      var rows = [
+        { html: 'CPU : <span class="b-w">AMD Ryzen 5 3500X 6-Core Processor</span>', wait: 220 },
+        { html: ' Speed : 3.60 GHz   Socket AM4', wait: 260 },
+        { html: ' ', wait: 80 },
+        { html: 'Checking NVRAM..', wait: 260 },
+        { html: 'Memory Test : <span class="b-w" id="pcsu-ram-cnt">0</span> <span class="b-w">MB</span> <span id="pcsu-ram-ok"></span>', wait: 240, ramRoll: true },
+        { html: ' ', wait: 100 },
+        { html: 'Auto-Detecting PCIe x16... <span class="b-w">NVIDIA GeForce GTX 1060 Founders Edition</span>', wait: 380 },
+        { html: 'Auto-Detecting M2_1....... <span class="b-w">WDC WDS240G2G0B-00EPW0</span> <span class="b-g">(240GB)</span>', wait: 360 },
+        { html: 'Auto-Detecting SATA1...... <span class="b-g">None</span>', wait: 240 },
+        { html: 'USB Device(s): 1 Keyboard, 1 Mouse', wait: 260 },
+        { html: ' ', wait: 100 },
+        { html: 'CMOS Settings Loaded (DPR ' + prTxt + ', Bloom ' + (cfg.fx ? 'ON' : 'OFF') + ', Pins ' + (cfg.pins ? 'ON' : 'OFF') + ')', wait: 340, beep: true },
+        { html: '<span class="b-w">Starting Anatomiya_PC...</span> <span class="pcsu-bios-cur" aria-hidden="true"></span>', wait: 680 }
       ];
-      log.innerHTML = lines.map(function (html) { return '<li>' + html + '</li>'; }).join('');
+      log.innerHTML = rows.map(function (r) { return '<li>' + r.html + '</li>'; }).join('');
       post.hidden = false;
-      post.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, easing: 'ease-out', fill: 'both' });
+      var fadeIn = post.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'both' });
+      await sleep(540);
+      if (started) return;
+      try { fadeIn.cancel(); } catch (e) {}
+      post.style.opacity = '1';
 
       var items = $$('li', log);
       for (var i = 0; i < items.length; i++) {
         if (started) return;
         items[i].classList.add('on');
-        await sleep(140);
+        if (rows[i].ramRoll) {
+          var ramEl = q('#pcsu-ram-cnt'), okEl = q('#pcsu-ram-ok');
+          var steps = [1024, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384];
+          for (var k = 0; k < steps.length; k++) {
+            if (started) return;
+            if (ramEl) ramEl.textContent = String(steps[k]);
+            await sleep(65);
+          }
+          if (okEl) okEl.innerHTML = '<span class="b-w">OK</span> <span class="b-g">(DDR4-3200 Dual Channel)</span>';
+        }
+        if (rows[i].beep) {
+          playPostBeep();
+        }
+        await sleep(rows[i].wait);
       }
       if (started) return;
-      stat.textContent = 'SYSTEM READY';
-      stat.style.color = '#41ffa8';
-      await sleep(220);
       start();
     }
 
@@ -11742,7 +11793,7 @@ m1 = [
       go(i === 0 ? 1 : 0);
       go(i);
       ov.style.pointerEvents = 'none';
-      var fade = ov.animate([{ opacity: 1 }, { opacity: 0 }], { duration: RM ? 200 : 550, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+      var fade = ov.animate([{ opacity: 1 }, { opacity: 0 }], { duration: RM ? 200 : 700, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
       var cleanup = function () { ov.remove(); root.classList.remove('su-live'); };
       fade.finished.then(cleanup).catch(cleanup);
       if (done) done();
