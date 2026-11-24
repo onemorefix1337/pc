@@ -9,8 +9,8 @@
 <meta name="color-scheme" content="dark">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:title" content="Поколения ЭВМ — от ламп до кубитов">
-<meta property="og:description" content="Интерактивная 3D-презентация: пять поколений ЭВМ, шестое поколение и будущее вычислений. Лаборатории, тест, режим докладчика.">
+<meta property="og:title" content="Анатомия ПК — интерактивный 3D-гид по комплектующим">
+<meta property="og:description" content="Интерактивная 3D-презентация железа: MSI B450M-A PRO MAX, Ryzen 5 3500X, GTX 1060 FE, WD Green, охлаждение, БП, тест и ошибки сборки.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23080512'/%3E%3Ccircle cx='32' cy='32' r='15' fill='none' stroke='%23b794ff' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='5.5' fill='%235ee1ff'/%3E%3C/svg%3E">
 
 <style>
@@ -2612,7 +2612,7 @@ body.p-setup #pc3d-pins {
 </div>
 
 <div id="hud">
-  <div class="sec" id="hud-sec"><i></i><span>Поколения ЭВМ</span></div>
+  <div class="sec" id="hud-sec"><i></i><span>Анатомия ПК</span></div>
   <div class="num">
     <span id="hud-num">01 / 01</span>
     <button id="btn-ov" title="Обзор слайдов (G)" aria-label="Обзор слайдов">
@@ -10896,7 +10896,7 @@ m1 = [
           : none('Для этого слайда терминов нет — найдите нужный на вкладке «Поиск».');
         break;
       case 'find':
-        h = '<div class="pv-find"><input type="search" class="pv-q" placeholder="Термин, аббревиатура или вопрос: GAA, кубит, Амдал…" autocomplete="off" spellcheck="false" aria-label="Поиск по материалам докладчика"><div class="pv-fres"></div></div>';
+        h = '<div class="pv-find"><input type="search" class="pv-q" placeholder="Термин, аббревиатура или вопрос: AM4, VRM, DDR4, GTX 1060…" autocomplete="off" spellcheck="false" aria-label="Поиск по материалам докладчика"><div class="pv-fres"></div></div>';
         break;
       default:
         h = s.notes ? s.notes.innerHTML : none('Для этого слайда заметок нет.');
@@ -10967,7 +10967,7 @@ m1 = [
     if (!w) { toast('Браузер заблокировал всплывающее окно — показываю заметки на странице (N)'); setDock(true); return; }
     try {
       var d = w.document;
-      d.open(); d.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Режим докладчика — Поколения ЭВМ</title></head><body></body></html>'); d.close();
+      d.open(); d.write('<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Режим докладчика — Анатомия ПК</title></head><body></body></html>'); d.close();
       d.head.appendChild(d.importNode($('head style'), true));
       var st = d.createElement('style'); st.textContent = 'html{font-size:16px!important}html,body{height:100%;overflow:hidden;background:#0b0814!important}body{display:block!important}';
       d.head.appendChild(st);
@@ -11232,7 +11232,7 @@ m1 = [
   var last = -1;
   function onSlide(i, prev) {
     var s = info[i];
-    document.title = i === 0 ? BASE_TITLE : (i + 1) + '/' + N + ' · ' + s.title + ' — Поколения ЭВМ';
+    document.title = i === 0 ? BASE_TITLE : (i + 1) + '/' + N + ' · ' + s.title + ' — Анатомия ПК';
     live.textContent = 'Слайд ' + (i + 1) + ' из ' + N + '. ' + s.title;
     store.set('pos', i);
     hideCard();
@@ -11257,7 +11257,7 @@ m1 = [
   function buildHandout() {
     var old = $('#p-handout'); if (old) old.remove();
     var h = document.createElement('div'); h.id = 'p-handout';
-    h.innerHTML = '<h1>Комплектующие ПК — практический гид по сборке</h1><p class="sub">Конспект презентации · ' + N + ' слайдов · ' + new Date().toLocaleDateString('ru-RU') + '</p>';
+    h.innerHTML = '<h1>Анатомия ПК — интерактивный 3D-гид по комплектующим</h1><p class="sub">Конспект презентации · ' + N + ' слайдов · ' + new Date().toLocaleDateString('ru-RU') + '</p>';
     info.forEach(function (s) {
       var a = document.createElement('article'); a.style.setProperty('--c', secColor(s.sec));
       a.innerHTML = '<h2><span>' + (s.i + 1) + '.</span>' + esc(s.title) + '</h2>';
